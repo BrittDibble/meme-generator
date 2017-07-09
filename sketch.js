@@ -1,4 +1,4 @@
-var PPKEY = ''
+var PPKEY = 'AzuJWcFuUg3f0iLuL5zrl5M8RExaka469UWE81df'
 // variables for pulling data from spreadsheet
 var rawData;
 var rollCalls = []
@@ -159,6 +159,7 @@ function matchSenatorName(chamber, moc, picker) {
               mocRollCall = rollCalls[picker]
               mocPhone = memberList[i].phone
               getVote(rollCalls[picker], repId, picker)
+	      getRecentVotes()
             } else {
             }
           }
@@ -229,4 +230,17 @@ function getMsg(name, phone, sentiment, vote, bill) {
   fill(255);
   var topLine = text(callText, x, w - 450, rightTextBound, w);
   var bottomLine = text(repVoteText, x, w - 150, rightTextBound, w)
+}
+
+function getRecentVotes() {
+  $('#list-votes').children().remove();
+  rawData.forEach(addVote);
+}
+
+function addVote(pvalue) {
+  var selector = document.getElementById("list-votes");
+  var element = document.createElement("option");
+  element.textContent = pvalue.roll_call_number + " " + pvalue.date;
+  //element.value = states_titlecase[i].abbreviation;
+  selector.appendChild(element);
 }
