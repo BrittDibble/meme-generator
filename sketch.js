@@ -1,4 +1,4 @@
-var PPKEY = 'AzuJWcFuUg3f0iLuL5zrl5M8RExaka469UWE81df'
+var PPKEY = ''
 // variables for pulling data from spreadsheet
 var rawData;
 var rollCalls = []
@@ -104,7 +104,7 @@ function createButtons(senatorList) {
   function setMoc(button, moc) {
     function assignMoc() {
       $('#tempLoading').remove();
-      $('#canvas').append('<p id="tempLoading">Finding latest votes...</p>');
+      $('#canvas').append('<p id="tempLoading">Select Vote...</p>');
       // set MOC's name to be used on meme 
       mocName = moc
       // get MOC's image
@@ -153,13 +153,8 @@ function matchSenatorName(chamber, moc, picker) {
             // if there's a match, get voting and contact info
             if (moc.indexOf(memberList[i].last_name) > -1 ) {
               repId = (memberList[i].id).toString()
-              // pick a random roll call vote from the spreadsheet
-              picker = Math.floor(Math.random() * rollCalls.length)
-              console.log('bill: ', rollCalls[picker])
-              mocRollCall = rollCalls[picker]
+              getRecentVotes()
               mocPhone = memberList[i].phone
-              getVote(rollCalls[picker], repId, picker)
-	      getRecentVotes()
             } else {
             }
           }
@@ -233,14 +228,17 @@ function getMsg(name, phone, sentiment, vote, bill) {
 }
 
 function getRecentVotes() {
-  $('#list-votes').children().remove();
-  rawData.forEach(addVote);
+  $('#list-votes').html('');
+  for(i = 0; i < rawData.length; i++) {
+    var button = createButton(rawData[i].summary)
+    button.parent('list-votes');
+    setVote(button, rawData[i], i);
+  }
+  function setVote(button, data, index) {
+    function assignVote() {
+      getVote(data.roll_call_number, repId, index);
+    }
+    button.mousePressed(assignVote)
+  }
 }
 
-function addVote(pvalue) {
-  var selector = document.getElementById("list-votes");
-  var element = document.createElement("option");
-  element.textContent = pvalue.roll_call_number + " " + pvalue.date;
-  //element.value = states_titlecase[i].abbreviation;
-  selector.appendChild(element);
-}
