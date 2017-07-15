@@ -234,6 +234,7 @@ function getRecentVotes() {
   }
   function setVote(button, data, index) {
     function assignVote() {
+      mocRollCall = data.roll_call_number;
       clearCanvas();
       getImage(mocName);
       getVote(data.roll_call_number, repId, index);
