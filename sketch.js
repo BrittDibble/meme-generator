@@ -107,8 +107,6 @@ function createButtons(senatorList) {
       $('#canvas').append('<p id="tempLoading">Select Vote...</p>');
       // set MOC's name to be used on meme 
       mocName = moc
-      // get MOC's image
-      getImage(mocName)
       // start collecting vote information
       matchSenatorName("senate", mocName)
     }
@@ -236,6 +234,8 @@ function getRecentVotes() {
   }
   function setVote(button, data, index) {
     function assignVote() {
+      clearCanvas();
+      getImage(mocName);
       getVote(data.roll_call_number, repId, index);
     }
     button.mousePressed(assignVote)
