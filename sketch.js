@@ -1,4 +1,5 @@
 var PPKEY = ''
+var MAXVOTESSHOWN = 3;
 // variables for pulling data from spreadsheet
 var rawData;
 var rollCalls = []
@@ -104,11 +105,9 @@ function createButtons(senatorList) {
   function setMoc(button, moc) {
     function assignMoc() {
       $('#tempLoading').remove();
-      $('#canvas').append('<p id="tempLoading">Finding latest votes...</p>');
+      $('#canvas').append('<p id="tempLoading">Select Vote...</p>');
       // set MOC's name to be used on meme 
       mocName = moc
-      // get MOC's image
-      getImage(mocName)
       // start collecting vote information
       matchSenatorName("senate", mocName)
     }
@@ -153,12 +152,8 @@ function matchSenatorName(chamber, moc, picker) {
             // if there's a match, get voting and contact info
             if (moc.indexOf(memberList[i].last_name) > -1 ) {
               repId = (memberList[i].id).toString()
-              // pick a random roll call vote from the spreadsheet
-              picker = Math.floor(Math.random() * rollCalls.length)
-              console.log('bill: ', rollCalls[picker])
-              mocRollCall = rollCalls[picker]
+              getRecentVotes()
               mocPhone = memberList[i].phone
-              getVote(rollCalls[picker], repId, picker)
             } else {
             }
           }
@@ -229,4 +224,39 @@ function getMsg(name, phone, sentiment, vote, bill) {
   fill(255);
   var topLine = text(callText, x, w - 450, rightTextBound, w);
   var bottomLine = text(repVoteText, x, w - 150, rightTextBound, w)
+}
+
+function getRecentVotes() {
+  var maxRollNumber = getMostRecentVote();
+  $('#list-votes').html('');
+  for(i = 0; i < rawData.length; i++) {
+    if(maxRollNumber - rawData[i].roll_call_number < MAXVOTESSHOWN)
+    {
+      var button = createButton(rawData[i].summary)
+      button.parent('list-votes');
+      setVote(button, rawData[i], i);
+    }
+  }
+  function setVote(button, data, index) {
+    function assignVote() {
+      mocRollCall = data.roll_call_number;
+      clearCanvas();
+      getImage(mocName);
+      getVote(data.roll_call_number, repId, index);
+    }
+    button.mousePressed(assignVote)
+  }
+}
+
+function getMostRecentVote() {
+  var largestRollCallNumber = 0;
+  for(i = 0; i < rawData.length; i++)
+  {
+  	var vote = rawData[i];
+  	if(vote.roll_call_number > largestRollCallNumber)
+  	{
+  		largestRollCallNumber = vote.roll_call_number;
+  	}
+  }
+  return largestRollCallNumber;
 }
