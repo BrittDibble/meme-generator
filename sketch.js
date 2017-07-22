@@ -1,4 +1,5 @@
 var PPKEY = ''
+var MAXVOTESSHOWN = 3;
 // variables for pulling data from spreadsheet
 var rawData;
 var rollCalls = []
@@ -226,11 +227,15 @@ function getMsg(name, phone, sentiment, vote, bill) {
 }
 
 function getRecentVotes() {
+  var maxRollNumber = getMostRecentVote();
   $('#list-votes').html('');
   for(i = 0; i < rawData.length; i++) {
-    var button = createButton(rawData[i].summary)
-    button.parent('list-votes');
-    setVote(button, rawData[i], i);
+    if(maxRollNumber - rawData[i].roll_call_number < MAXVOTESSHOWN)
+    {
+      var button = createButton(rawData[i].summary)
+      button.parent('list-votes');
+      setVote(button, rawData[i], i);
+    }
   }
   function setVote(button, data, index) {
     function assignVote() {
@@ -243,3 +248,15 @@ function getRecentVotes() {
   }
 }
 
+function getMostRecentVote() {
+  var largestRollCallNumber = 0;
+  for(i = 0; i < rawData.length; i++)
+  {
+  	var vote = rawData[i];
+  	if(vote.roll_call_number > largestRollCallNumber)
+  	{
+  		largestRollCallNumber = vote.roll_call_number;
+  	}
+  }
+  return largestRollCallNumber;
+}
