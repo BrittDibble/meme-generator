@@ -1,13 +1,14 @@
 var PPKEY = ''
-var MAXVOTESSHOWN = 3;
+var MAXVOTESSHOWN = 3
 // variables for pulling data from spreadsheet
 var rawData;
 var rollCalls = []
 // variables for application interface
-var canvas,
-  findButton,
+var findButton,
   saveButton,
   selector;
+//canvasManager
+var canvasManager; 
 // square canvas dimensions
 var w = 500;
 // meme text positioning and size
@@ -27,8 +28,8 @@ function setup() {
                    callback: gotData,
                    simpleSheet: true } )
   // create canvas
-  canvas = createCanvas(w, w);
-  canvas.parent('canvas');
+  canvasManager  = new CanvasManager();
+  canvasManager.getCanvas().parent('canvas');
   background(200);
   // create dropdown list of states
   selector = document.getElementById("state-dropdown");
@@ -49,7 +50,7 @@ function setup() {
 }
 
 function saveIt() {
-  saveCanvas(canvas, 'Share_'+ mocName, 'jpg');
+  saveCanvas(canvasManager.getCanvas(), 'Share_'+ mocName, 'jpg');
 }
 
 function clearCanvas() {
