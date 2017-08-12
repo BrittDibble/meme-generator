@@ -8,13 +8,7 @@ var findButton,
   saveButton,
   selector;
 //canvasManager
-var canvasManager; 
-// square canvas dimensions
-var w = 500;
-// meme text positioning and size
-var x = 10;
-var ts = 40;
-var rightTextBound = w - x;
+var canvasManager;
 // vars for populating the canvas with data
 var mocPosition,
   sentiment,
@@ -30,7 +24,6 @@ function setup() {
   // create canvas
   canvasManager  = new CanvasManager();
   canvasManager.getCanvas().parent('canvas');
-  background(200);
   // create dropdown list of states
   selector = document.getElementById("state-dropdown");
   for (var i = 0; i < states_titlecase.length; i++) {
@@ -46,16 +39,7 @@ function setup() {
   // create save button
   saveButton = createButton('Save');
   saveButton.parent('save-canvas');
-  saveButton.mousePressed(saveIt);
-}
-
-function saveIt() {
-  saveCanvas(canvasManager.getCanvas(), 'Share_'+ mocName, 'jpg');
-}
-
-function clearCanvas() {
-  clear();
-  background(200);
+  saveButton.mousePressed(canvasManager.saveIt);
 }
 
 // store daily spreadsheet data in rawData variable
@@ -94,7 +78,7 @@ function getSenatorsByState(state, senatorList) {
 // then, it puts the button in the 'list-reps' div
 function createButtons(senatorList) {
   // clear existing stuff on the canvas
-  clearCanvas();
+  canvasManager.clearCanvas();
   // clear existing button cache
   $('#list-reps').html('');
   // for each MOC, create a button with MOC's name
@@ -119,7 +103,7 @@ function createButtons(senatorList) {
 
 function getImage(moc) {
   // clear existing image
-  clearCanvas();
+  canvasManager.clearCanvas();
   // get imgUrl from moc name that was passed into the function
   var imgUrl;
   for (i = 0; i < senators.length; i++) {
@@ -128,12 +112,7 @@ function getImage(moc) {
     }
   }
   // load MOC's image from the imgUrl passed in
-  loadImage(imgUrl, function(loadedImg) {
-    var ratio = loadedImg.width / loadedImg.height
-    var divide = loadedImg.width / w
-    var height = loadedImg.height / divide
-    image(loadedImg, 0, 0, w, height);
-  });
+  canvasManager.loadImage(imgUrl);
 }
 
 // this function makes a call to the propublica API to get recent votes and contact info:
@@ -184,47 +163,15 @@ function getVote(rollCall, repId, picker) {
 }
 
 function getSentiment(mocPosition, picker) {
-  var desiredVote = rawData[picker].desired_vote
+  var desiredVote = rawData[picker].desired_vote;
   if (mocPosition.indexOf(desiredVote) > -1) {
-    sentiment = rawData[picker].pro_text
-    console.log('sentiment: ', sentiment)
+    sentiment = rawData[picker].pro_text;
+    console.log('sentiment: ', sentiment);
   } else {
-    sentiment = rawData[picker].anti_text
-    console.log('sentiment: ', sentiment)
+    sentiment = rawData[picker].anti_text;
+    console.log('sentiment: ', sentiment);
   }
-  getMsg(mocName, mocPhone, sentiment, mocPosition, mocRollCall)
-}
-
-function getMsg(name, phone, sentiment, vote, bill) {
-  textSize(ts);
-  // Call 208-980-2091 to say "I oppose!"
-  // Rep. Murray just voted "No" on RB. 157
-  textFont("Montserrat");
-  // construct the text strings and measure their widths
-  var callText = 'Call ' + phone + ' to say ' + '\"' + sentiment + '\"';
-  var repVoteText = name + " just voted " + vote + " on " + bill;
-  var topWidth = textWidth(callText);
-  var bottomWidth = textWidth(repVoteText);
-  var lineHeight = ts*1.2
-
-  // draw background boxes for text based on text string widths
-  var bgColor = color('rgba(25, 38, 82, .5)');
-  fill(bgColor);
-  noStroke();
-  var topRect = rect(x, w-450, w - 2 * x, lineHeight);
-  var bottomRect = rect(x, w-150, w - 2 * x, lineHeight);
-  // if text goes past the rightTextBound, 
-  // draw background boxes on the next line
-  if (topWidth > w - rightTextBound || bottomWidth > w - rightTextBound) {
-    var topRect2 = rect(x, w-400, topWidth - w + x, lineHeight);
-    var bottomRect2 = rect(x, w-100, bottomWidth - w + x, lineHeight);
-  }
-  // remove 'loading' text
-  $('#tempLoading').remove();
-  // create bounding boxes for text
-  fill(255);
-  var topLine = text(callText, x, w - 450, rightTextBound, w);
-  var bottomLine = text(repVoteText, x, w - 150, rightTextBound, w)
+  canvasManager.setImageMessage(mocName, mocPhone, sentiment, mocPosition, mocRollCall);
 }
 
 function getRecentVotes() {
@@ -241,7 +188,7 @@ function getRecentVotes() {
   function setVote(button, data, index) {
     function assignVote() {
       mocRollCall = data.roll_call_number;
-      clearCanvas();
+      canvasManager.clearCanvas();
       getImage(mocName);
       getVote(data.roll_call_number, repId, index);
     }
