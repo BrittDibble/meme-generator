@@ -5,6 +5,7 @@ function CanvasManager(){
   this.x = 10;
   this.ts = 40;
   this.rightTextBound = this.w - this.x;
+  this.textFont = "Montserrat";
   this.canvas = null;
 }
 
@@ -31,35 +32,37 @@ CanvasManager.prototype = {
     image(loadedImg, 0, 0, this.w, height);
     });
   },
-  setImageMessage:function(name, phone, sentiment, vote, bill) {
+  setCanvasText:function(inputText, offset, offset2) {
     textSize(this.ts);
-    // Call 208-980-2091 to say "I oppose!"
-    // Rep. Murray just voted "No" on RB. 157
-    textFont("Montserrat");
-    // construct the text strings and measure their widths
-    var callText = 'Call ' + phone + ' to say ' + '\"' + sentiment + '\"';
-    var repVoteText = name + " just voted " + vote + " on " + bill;
-    var topWidth = textWidth(callText);
-    var bottomWidth = textWidth(repVoteText);
-    var lineHeight = this.ts*1.2
-    
-    // draw background boxes for text based on text string widths
+    textFont(this.textFont);
+    var widthOfText = textWidth(inputText);
+    var lineHeight = this.ts * 1.2;
     var bgColor = color('rgba(25, 38, 82, .5)');
     fill(bgColor);
     noStroke();
-    var topRect = rect(this.x, this.w-450, this.w - 2 * this.x, lineHeight);
-    var bottomRect = rect(this.x, this.w-150, this.w - 2 * this.x, lineHeight);
-    // if text goes past the rightTextBound, 
-    // draw background boxes on the next line
-    if (topWidth > this.w - this.rightTextBound || bottomWidth > this.w - this.rightTextBound) {
-      var topRect2 = rect(this.x, this.w-400, topWidth - this.w + this.x, lineHeight);
-      var bottomRect2 = rect(this.x, this.w-100, bottomWidth - this.w + this.x, lineHeight);
+    var textRect = rect(this.x, this.w-offset, canvasManager.getSizeOfTopLine(this.ts, this.textFont, inputText), lineHeight);
+    if(widthOfText > this.w - this.rightTextBound) {
+      var textRect2 = rect(this.x, this.w - offset2, widthOfText-canvasManager.getSizeOfTopLine(this.ts, this.textFont, inputText), lineHeight);
     }
-    // remove 'loading' text
-    $('#tempLoading').remove();
-    // create bounding boxes for text
     fill(255);
-    var topLine = text(callText, this.x, this.w - 450, this.rightTextBound, this.w);
-    var bottomLine = text(repVoteText, this.x, this.w - 150, this.rightTextBound, this.w);
+    var line = text(inputText, this.x, this.w - offset, this.rightTextBound, this.w);
+  },
+  setUpperCanvasText:function(text) {
+    canvasManager.setCanvasText(text, 450, 400);
+  },
+  setLowerCanvasText:function(text) {
+    canvasManager.setCanvasText(text, 150, 100);
+  },
+  getSizeOfTopLine:function(ts, tf, text) {
+    textSize(ts);
+    textFont(tf);
+    var textArr = text.split(" ");
+    var index = 1;
+    var testString = textArr[0];
+    while(textWidth(testString + " " + textArr[index]) < this.rightTextBound){
+      testString = testString + " " + textArr[index];
+      index++;
+    }
+    return textWidth(testString);
   }
 }

@@ -171,7 +171,21 @@ function getSentiment(mocPosition, picker) {
     sentiment = rawData[picker].anti_text;
     console.log('sentiment: ', sentiment);
   }
-  canvasManager.setImageMessage(mocName, mocPhone, sentiment, mocPosition, mocRollCall);
+  setImageMessage(mocName, mocPhone, sentiment, mocPosition, mocRollCall);
+}
+
+function setImageMessage(name, phone, sentiment, vote, bill) {
+  // Call 208-980-2091 to say "I oppose!"
+  // Rep. Murray just voted "No" on RB. 157
+  // construct the text strings
+  var callText = 'Call ' + phone + ' to say ' + '\"' + sentiment + '\"';
+  var repVoteText = name + " just voted " + vote + " on " + bill;
+  
+  // remove 'loading' text
+  $('#tempLoading').remove();
+  
+  canvasManager.setUpperCanvasText(callText);
+  canvasManager.setLowerCanvasText(repVoteText);
 }
 
 function getRecentVotes() {
