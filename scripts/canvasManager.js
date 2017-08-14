@@ -40,9 +40,10 @@ CanvasManager.prototype = {
     var bgColor = color('rgba(25, 38, 82, .5)');
     fill(bgColor);
     noStroke();
-    var textRect = rect(this.x, this.w-offset, canvasManager.getSizeOfTopLine(this.ts, this.textFont, inputText), lineHeight);
+    var sizeOfTop = canvasManager.getSizeOfTopLine(this.ts, this.textFont, inputText);
+    var textRect = rect(this.x, this.w-offset, sizeOfTop, lineHeight);
     if(widthOfText > this.w - this.rightTextBound) {
-      var textRect2 = rect(this.x, this.w - offset2, widthOfText-canvasManager.getSizeOfTopLine(this.ts, this.textFont, inputText), lineHeight);
+      var textRect2 = rect(this.x, this.w - offset2, widthOfText-sizeOfTop, lineHeight);
     }
     fill(255);
     var line = text(inputText, this.x, this.w - offset, this.rightTextBound, this.w);
