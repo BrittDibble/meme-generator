@@ -27,9 +27,9 @@ CanvasManager.prototype = {
   loadImage:function(imgUrl) {
     loadImage(imgUrl, function(loadedImg) {
     var ratio = loadedImg.width / loadedImg.height;
-    var divide = loadedImg.width / this.w;
+    var divide = loadedImg.width / canvasManager.w;
     var height = loadedImg.height / divide;
-    image(loadedImg, 0, 0, this.w, height);
+    image(loadedImg, 0, 0, canvasManager.w, height);
     });
   },
   setCanvasText:function(inputText, offset, offset2) {
@@ -40,10 +40,9 @@ CanvasManager.prototype = {
     var bgColor = color('rgba(25, 38, 82, .5)');
     fill(bgColor);
     noStroke();
-    var sizeOfTop = canvasManager.getSizeOfTopLine(this.ts, this.textFont, inputText);
-    var textRect = rect(this.x, this.w-offset, sizeOfTop, lineHeight);
+    var textRect = rect(this.x, this.w-offset, canvasManager.getSizeOfTopLine(this.ts, this.textFont, inputText), lineHeight);
     if(widthOfText > this.w - this.rightTextBound) {
-      var textRect2 = rect(this.x, this.w - offset2, widthOfText-sizeOfTop, lineHeight);
+      var textRect2 = rect(this.x, this.w - offset2, widthOfText-canvasManager.getSizeOfTopLine(this.ts, this.textFont, inputText), lineHeight);
     }
     fill(255);
     var line = text(inputText, this.x, this.w - offset, this.rightTextBound, this.w);
