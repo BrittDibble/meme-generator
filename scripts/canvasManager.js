@@ -32,7 +32,10 @@ CanvasManager.prototype = {
     image(loadedImg, 0, 0, canvasManager.w, height);
     });
   },
-  setCanvasText:function(inputText, offset, offset2) {
+  setCanvasTextLine:function(inputText, startx, starty, lineHeight){
+    
+  },
+  setCanvasText:function(inputText, startx, offset) {
     textSize(this.ts);
     textFont(this.textFont);
     var widthOfText = textWidth(inputText);
@@ -40,12 +43,12 @@ CanvasManager.prototype = {
     var bgColor = color('rgba(25, 38, 82, .5)');
     fill(bgColor);
     noStroke();
-    var textRect = rect(this.x, this.w-offset, canvasManager.getSizeOfTopLine(this.ts, this.textFont, inputText), lineHeight);
+    var textRect = rect(this.x, this.w-startx, canvasManager.getSizeOfLine(this.ts, this.textFont, inputText), lineHeight);
     if(widthOfText > this.w - this.rightTextBound) {
-      var textRect2 = rect(this.x, this.w - offset2, widthOfText-canvasManager.getSizeOfTopLine(this.ts, this.textFont, inputText), lineHeight);
+      var textRect2 = rect(this.x, this.w - offset, widthOfText-canvasManager.getSizeOfLine(this.ts, this.textFont, inputText), lineHeight);
     }
     fill(255);
-    var line = text(inputText, this.x, this.w - offset, this.rightTextBound, this.w);
+    var line = text(inputText, this.x, this.w - startx, this.rightTextBound, this.w);
   },
   setUpperCanvasText:function(text) {
     canvasManager.setCanvasText(text, 450, 400);
@@ -53,13 +56,13 @@ CanvasManager.prototype = {
   setLowerCanvasText:function(text) {
     canvasManager.setCanvasText(text, 150, 100);
   },
-  getSizeOfTopLine:function(ts, tf, text) {
+  getSizeOfLine:function(ts, tf, text) {
     textSize(ts);
     textFont(tf);
     var textArr = text.split(" ");
     var index = 1;
     var testString = textArr[0];
-    while(textWidth(testString + " " + textArr[index]) < this.rightTextBound){
+    while(textWidth(testString + " " + textArr[index]) < this.rightTextBound - 10){
       testString = testString + " " + textArr[index];
       index++;
     }
