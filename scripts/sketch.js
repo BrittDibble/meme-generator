@@ -86,8 +86,7 @@ function setMoc(button, moc) {
     if(mocRollCall != null)
     {
        canvasManager.clearCanvas();
-       getImage(mocName);
-       getVote(mocRollCall, repId, mocVoteIndex);
+       getVote(mocRollCall, repId, mocVoteIndex, getImage(mocName));
     }
   }
   // on button click, call assignSenator(), which calls matchSenatorName()
@@ -120,7 +119,7 @@ function getImage(moc) {
     }
   }
   // load MOC's image from the imgUrl passed in
-  canvasManager.loadImage(imgUrl);
+  return imgUrl;
 }
 
 // this function makes a call to the propublica API to get recent votes and contact info:
@@ -150,7 +149,7 @@ function matchSenatorName(chamber, moc, picker) {
 
 // this function uses the propublica API to return how a particular rep voted on a bill:
 // https://propublica.github.io/congress-api-docs/#get-a-specific-roll-call-vote
-function getVote(rollCall, repId, picker) {
+function getVote(rollCall, repId, picker, imageUrl) {
   $.ajax({
            url: "https://api.propublica.org/congress/v1/115/senate/sessions/1/votes/"+rollCall+".json",
            type: "GET",
@@ -166,11 +165,11 @@ function getVote(rollCall, repId, picker) {
               break;
             }
           }
-          getSentiment(mocPosition, picker)
+          getSentiment(mocPosition, picker, imageUrl)
         });
 }
 
-function getSentiment(mocPosition, picker) {
+function getSentiment(mocPosition, picker, imageUrl) {
   var desiredVote = rawData[picker].desired_vote;
   if (mocPosition.indexOf(desiredVote) > -1) {
     sentiment = rawData[picker].pro_text;
@@ -179,10 +178,10 @@ function getSentiment(mocPosition, picker) {
     sentiment = rawData[picker].anti_text;
     console.log('sentiment: ', sentiment);
   }
-  setImageMessage(mocName, mocPhone, sentiment, mocPosition, mocRollCall);
+  setImageMessage(mocName, mocPhone, sentiment, mocPosition, mocRollCall, imageUrl);
 }
 
-function setImageMessage(name, phone, sentiment, vote, bill) {
+function setImageMessage(name, phone, sentiment, vote, bill, imageUrl) {
   // Call 208-980-2091 to say "I oppose!"
   // Rep. Murray just voted "No" on RB. 157
   // construct the text strings
@@ -191,9 +190,12 @@ function setImageMessage(name, phone, sentiment, vote, bill) {
   
   // remove 'loading' text
   $('#tempLoading').remove();
-  
-  canvasManager.setUpperCanvasText(callText);
-  canvasManager.setLowerCanvasText(repVoteText);
+
+  createFrame(imageUrl, callText, repVoteText);
+}
+
+function createFrame(image, upperText, lowerText) {
+  canvasManager.loadFrame(image, upperText, lowerText);
 }
 
 function getRecentVotes() {
@@ -212,8 +214,7 @@ function getRecentVotes() {
       mocRollCall = data.roll_call_number;
       mocVoteIndex = index;
       canvasManager.clearCanvas();
-      getImage(mocName);
-      getVote(mocRollCall, repId, index);
+      getVote(mocRollCall, repId, index, getImage(mocName));
     }
     button.mousePressed(assignVote)
   }

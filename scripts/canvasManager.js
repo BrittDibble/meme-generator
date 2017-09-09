@@ -7,35 +7,43 @@ function CanvasManager(){
   this.rightTextBound = this.w - this.x;
   this.textFont = "Montserrat";
   this.canvas = null;
-}
 
-CanvasManager.prototype = {
-  getCanvas:function(){
+
+
+  this.getCanvas = function(){
     if(this.canvas == null){
       this.canvas = createCanvas(this.w, this.w);
       background(200);
     }
     return this.canvas;
-  },
-  clearCanvas:function() {
+  };
+
+  this.clearCanvas = function() {
     clear();
     background(200);
-  },
-  saveIt:function() {
-    saveCanvas(canvasManager.getCanvas(), 'Share_'+ mocName, 'jpg');
-  },
-  loadImage:function(imgUrl) {
+    return this;
+  };
+
+  this.saveIt = function() {
+    saveCanvas(this.canvas, 'Share_'+ mocName, 'jpg');
+  };
+
+  this.loadFrame = function(imgUrl, upperText, lowerText) {
     loadImage(imgUrl, function(loadedImg) {
     var ratio = loadedImg.width / loadedImg.height;
-    var divide = loadedImg.width / canvasManager.w;
+    var divide = loadedImg.width / this.w;
     var height = loadedImg.height / divide;
-    image(loadedImg, 0, 0, canvasManager.w, height);
+    image(loadedImg, 0, 0, this.w, height);
+    canvasManager.setUpperCanvasText(upperText);
+    canvasManager.setLowerCanvasText(lowerText);
     });
-  },
-  setCanvasTextLine:function(inputText, startx, starty, lineHeight){
-    
-  },
-  setCanvasText:function(inputText, startx, offset) {
+  };
+
+  this.setCanvasTextLine = function(inputText, startx, starty, lineHeight){
+    return this;
+  };
+
+  this.setCanvasText = function(inputText, startx, offset) {
     textSize(this.ts);
     textFont(this.textFont);
     var widthOfText = textWidth(inputText);
@@ -43,20 +51,26 @@ CanvasManager.prototype = {
     var bgColor = color('rgba(25, 38, 82, .5)');
     fill(bgColor);
     noStroke();
-    var textRect = rect(this.x, this.w-startx, canvasManager.getSizeOfLine(this.ts, this.textFont, inputText), lineHeight);
+    var textRect = rect(this.x, this.w-startx, this.getSizeOfLine(this.ts, this.textFont, inputText), lineHeight);
     if(widthOfText > this.w - this.rightTextBound) {
-      var textRect2 = rect(this.x, this.w - offset, widthOfText-canvasManager.getSizeOfLine(this.ts, this.textFont, inputText), lineHeight);
+      var textRect2 = rect(this.x, this.w - offset, widthOfText-this.getSizeOfLine(this.ts, this.textFont, inputText), lineHeight);
     }
     fill(255);
     var line = text(inputText, this.x, this.w - startx, this.rightTextBound, this.w);
-  },
-  setUpperCanvasText:function(text) {
-    canvasManager.setCanvasText(text, 450, 400);
-  },
-  setLowerCanvasText:function(text) {
-    canvasManager.setCanvasText(text, 150, 100);
-  },
-  getSizeOfLine:function(ts, tf, text) {
+    return this;
+  };
+
+  this.setUpperCanvasText = function(text) {
+    this.setCanvasText(text, 450, 400);
+    return this;
+  };
+
+  this.setLowerCanvasText = function(text) {
+    this.setCanvasText(text, 150, 100);
+    return this;
+  };
+
+  this.getSizeOfLine = function(ts, tf, text) {
     textSize(ts);
     textFont(tf);
     var textArr = text.split(" ");
@@ -67,5 +81,5 @@ CanvasManager.prototype = {
       index++;
     }
     return textWidth(testString);
-  }
-}
+  };
+};
