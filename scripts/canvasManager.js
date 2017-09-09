@@ -29,13 +29,21 @@ function CanvasManager(){
   };
 
   this.loadFrame = function(imgUrl, upperText, lowerText) {
-    loadImage(imgUrl, function(loadedImg) {
-    var ratio = loadedImg.width / loadedImg.height;
-    var divide = loadedImg.width / this.w;
-    var height = loadedImg.height / divide;
-    image(loadedImg, 0, 0, this.w, height);
-    canvasManager.setUpperCanvasText(upperText);
-    canvasManager.setLowerCanvasText(lowerText);
+    $('#tempLoading').remove();
+    $('#canvas').append('<p id="tempLoading">Loading...</p>');
+    loadImage(imgUrl, 
+    function(loadedImg) {
+      var ratio = loadedImg.width / loadedImg.height;
+      var divide = loadedImg.width / this.w;
+      var height = loadedImg.height / divide;
+      image(loadedImg, 0, 0, this.w, height);
+      canvasManager.setUpperCanvasText(upperText);
+      canvasManager.setLowerCanvasText(lowerText);
+      $('#tempLoading').remove();
+    },
+    function() {
+      $('#tempLoading').remove();
+      $('#canvas').append('<p id="tempLoading">Error Loading Image</p>');
     });
   };
 
