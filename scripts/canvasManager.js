@@ -34,9 +34,9 @@ function CanvasManager(){
     loadImage(imgUrl, 
     function(loadedImg) {
       var ratio = loadedImg.width / loadedImg.height;
-      var divide = loadedImg.width / this.w;
+      var divide = loadedImg.width / canvasManager.w;
       var height = loadedImg.height / divide;
-      image(loadedImg, 0, 0, this.w, height);
+      image(loadedImg, 0, 0, canvasManager.w, height);
       canvasManager.setUpperCanvasText(upperText);
       canvasManager.setLowerCanvasText(lowerText);
       $('#tempLoading').remove();
