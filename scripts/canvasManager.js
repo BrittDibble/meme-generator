@@ -47,44 +47,60 @@ function CanvasManager(){
     });
   };
 
-  this.setCanvasTextLine = function(inputText, startx, starty, lineHeight){
-    return this;
-  };
-
   this.setCanvasText = function(inputText, startx, offset) {
     textSize(this.ts);
     textFont(this.textFont);
     var widthOfText = textWidth(inputText);
     var lineHeight = this.ts * 1.2;
-    var bgColor = color('rgba(25, 38, 82, .5)');
-    fill(bgColor);
     noStroke();
-    var textRect = rect(this.x, this.w-startx, this.getSizeOfLine(this.ts, this.textFont, inputText), lineHeight);
-    if(widthOfText > this.w - this.rightTextBound) {
-      var textRect2 = rect(this.x, this.w - offset, widthOfText-this.getSizeOfLine(this.ts, this.textFont, inputText), lineHeight);
+    
+    var textArray = [];
+    var textArr = inputText.split(" ");
+    var buildString = textArr[0];
+    var index = 1;
+    while(index < textArr.length){
+      while(textWidth(buildString + " " + textArr[index]) < this.rightTextBound - 10 && index < textArr.length){
+        buildString = (buildString == "") ? textArr[index] : buildString + " " + textArr[index];
+        index++;
+      }
+      textArray.push(buildString);
+      buildString = "";
     }
-    fill(255);
-    var line = text(inputText, this.x, this.w - startx, this.rightTextBound, this.w);
+
+    for(var i = 0; i < textArray.length; i++)
+    {
+      this.setTextLine(textArray[i], startx - offset * i, startx, lineHeight);
+    }
+
     return this;
   };
 
   this.setUpperCanvasText = function(text) {
-    this.setCanvasText(text, 450, 400);
+    this.setCanvasText(text, 450, 50);
     return this;
   };
 
   this.setLowerCanvasText = function(text) {
-    this.setCanvasText(text, 150, 100);
+    this.setCanvasText(text, 150, 50);
     return this;
   };
 
-  this.getSizeOfLine = function(ts, tf, text) {
+  this.setTextLine = function (inputText, startx, xoffset, lineHeight) {
+    var bgColor = color('rgba(25, 38, 82, .5)');
+    fill(bgColor);
+    var textRect = rect(this.x, this.w - startx, this.getSizeOfLine(this.ts, this.textFont, inputText), lineHeight);
+    fill(255);
+    var textLine = text(inputText, this.x, this.w - startx, this.rightTextBound, this.w);
+    return this;
+  };
+
+  this.getSizeOfLine = function(ts, tf, textInput) {
     textSize(ts);
     textFont(tf);
-    var textArr = text.split(" ");
+    var textArr = textInput.split(" ");
     var index = 1;
     var testString = textArr[0];
-    while(textWidth(testString + " " + textArr[index]) < this.rightTextBound - 10){
+    while(index < textArr.length && textWidth(testString + " " + textArr[index]) < this.rightTextBound - 10){
       testString = testString + " " + textArr[index];
       index++;
     }
